@@ -7,7 +7,7 @@ goto formatList
 :formatList
 ECHO.
 ECHO ----------------------------------------------------------------------------------------------------------------------
-youtube-dl -F %URL%
+D:\Soft\Mpv\youtube-dl.exe -F %URL% -i --youtube-skip-dash-manifest
 ECHO ----------------------------------------------------------------------------------------------------------------------
 goto selection
 
@@ -15,25 +15,27 @@ goto selection
 :selection
 ECHO.
 ECHO ----------------------------------------------------------------------------------------------------------------------
-ECHO 1) Video + Audio
-ECHO 2) Single format (Audio only / Video only)
+ECHO 1) Download
+ECHO 2) Download Partial
 ECHO.
 SET /P option="Select option: "
-if %option% == 1 (goto download)
-if %option% == 2 (goto downloadSingle)
+if %option% == 1 (goto downloadSingle)
+if %option% == 2 (goto Partial)
 ECHO.
 ECHO Unknown value
 ECHO ----------------------------------------------------------------------------------------------------------------------
 goto selection
 
-:download
+:Partial
 ECHO ----------------------------------------------------------------------------------------------------------------------
 ECHO.
 ECHO ----------------------------------------------------------------------------------------------------------------------
-SET /P video="Select video format: "
-SET /P audio="Select audio format: "
+SET /P format="Select format: "
+SET /P Start="Start Time (HH:MM:SS): "
+SET /P End="End Time (HH:MM:SS): "
+SET /P Name="Name (with Extension): "
 ECHO.
-youtube-dl -o Downloads/%%(title)s.%%(ext)s -f %video%+%audio% -i --ignore-config --hls-prefer-native %URL%
+for /f %%N in ('D:\Soft\Mpv\youtube-dl.exe -f %%format%% -g %%URL%%') do @ffmpeg -i "%%N" -ss %Start% -to %End% -c copy -copyts %Name%
 ECHO ----------------------------------------------------------------------------------------------------------------------
 ECHO.
 PAUSE
@@ -45,7 +47,7 @@ ECHO.
 ECHO ----------------------------------------------------------------------------------------------------------------------
 SET /P format="Select format: "
 ECHO.
-youtube-dl -o Downloads/%%(title)s.%%(ext)s -f %format% -i --add-metadata --all-subs --embed-subs --embed-thumbnail %URL%
+D:\Soft\Mpv\youtube-dl.exe -o Downloads/%%(title)s.%%(ext)s -f %format% -i --youtube-skip-dash-manifest --add-metadata --no-mtime --hls-prefer-native --write-auto-sub --write-sub --sub-lang en --embed-subs --embed-thumbnail --merge-output-format mp4 %URL%
 ECHO ----------------------------------------------------------------------------------------------------------------------
 ECHO.
 PAUSE
