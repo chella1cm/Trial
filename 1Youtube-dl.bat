@@ -12,20 +12,22 @@ goto selection
 
 :selection
 ECHO.
-ECHO Enter 1 to Download Partial video or Enter Format to Download full video.
-ECHO.
 SET /P format="Select format: "
+ECHO 1) Download
+ECHO 2) Download Partial
 ECHO.
-if %format% == 1 (goto Partial)
+SET /P option="Select option: "
+if %option% == 1 (goto downloadSingle)
+if %option% == 2 (goto Partial)
 ECHO.
-ECHO Downloading.....
+ECHO Unknown value
 ECHO ----------------------------------------------------------------------------------------------------------------------
-goto downloadSingle
+goto selection
 
 :Partial
+SET /P format="Select format: "
 SET /P Start="Start Time (HH:MM:SS): "
 SET /P End="End Time (HH:MM:SS): "
-SET /P format="Select Video format: "
 SET /P Name="Name (with Extension): "
 ECHO.
 for /f %%N in ('D:\Soft\Mpv\youtube-dl.exe --youtube-skip-dash-manifest -f %%format%% -g %%URL%%') do @ffmpeg -i "%%N" -ss %Start% -to %End% -c copy -copyts C:\Users\Chella\Downloads\%Name%
@@ -36,6 +38,7 @@ EXIT
 
 :downloadSingle
 ECHO.
+SET /P format="Select format: "
 ECHO.
 D:\Soft\Mpv\youtube-dl.exe -o C:\Users\Chella\Downloads/%%(title)s.%%(ext)s -f %format% -i --youtube-skip-dash-manifest -w --add-metadata --newline --no-mtime --hls-prefer-native --write-auto-sub --write-sub --sub-lang en --embed-subs --embed-thumbnail --merge-output-format mp4 --external-downloader aria2c --external-downloader-args "-c -j 5 -x 10 --summary-interval=0" %URL%
 ECHO ----------------------------------------------------------------------------------------------------------------------
